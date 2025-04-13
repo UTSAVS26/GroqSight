@@ -25,8 +25,8 @@ GroqSight empowers visually impaired individuals by providing real-time, intelli
 
 ### Team Members:  
 - Utsav SInghal ([GitHub](https://github.com/UTSAVS26) / [LinkedIn](https://linkedin.com/in/utsavsinghal2604) / ROLE)  
-- Nandani Daga ([GitHub](https://github.com/) / [LinkedIn](https://linkedin.com/in/) / ROLE)  
-- Shreya Gosavi ([GitHub](https://github.com/) / [LinkedIn](https://linkedin.com/in/) / ROLE)  
+- Nandani Daga ([GitHub](https://github.com/) / [LinkedIn](https://linkedin.com/in/)  / ROLE)  
+- Shreya Gosavi ([GitHub](https://github.com/Shreyagosavi811) / [LinkedIn](https://www.linkedin.com/in/shreya-gosavi-297485299/)  / ROLE)  
 - Kavya ([GitHub](https://github.com/) / [LinkedIn](https://linkedin.com/in/) / ROLE)  
 
 ### Your Approach:  
