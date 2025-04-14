@@ -1,29 +1,59 @@
-import React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Webcam from 'react-webcam';
+import { speakText } from './utils/speech';
 
-function App() {
+export default function App() {
+  const webcamRef = useRef(null);
+  const [description, setDescription] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const captureAndDescribe = async () => {
+    if (!webcamRef.current) return;
+
+    const imageSrc = webcamRef.current.getScreenshot();
+    setIsProcessing(true);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/describe-scene', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: imageSrc }),
+      });
+      const data = await response.json();
+      setDescription(data.description);
+      speakText(data.description);
+    } catch (error) {
+      console.error('Error:', error);
+      speakText("Sorry, I couldn't understand the scene.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      captureAndDescribe();
+    }, 5000); // every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-2xl shadow-2xl p-10 max-w-xl w-full space-y-6">
-        <h1 className="text-4xl font-extrabold text-center text-teal-400">
-          GroqSight
-        </h1>
-        <p className="text-lg text-center text-gray-300">
-          Real-time audio descriptions for the visually impaired, powered by Groq.
-        </p>
-        <div className="flex flex-col space-y-4">
-          <button className="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 rounded-xl transition duration-300">
-            Start Camera
-          </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl transition duration-300">
-            Customize Audio
-          </button>
-        </div>
-        <footer className="text-sm text-gray-500 text-center mt-4">
-          Built with ❤️ and Groq
-        </footer>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-4">
+      <h1 className="text-3xl font-bold mb-6">👁️‍🗨️ GroqSight</h1>
+      <Webcam
+        audio={false}
+        ref={webcamRef}
+        screenshotFormat="image/jpeg"
+        className="rounded-lg mb-4 w-full max-w-md"
+      />
+      <button
+        onClick={captureAndDescribe}
+        className="bg-blue-600 px-6 py-2 rounded-md hover:bg-blue-700 mb-4"
+      >
+        {isProcessing ? 'Processing...' : 'Describe Scene'}
+      </button>
+      <div className="text-center text-lg">{description}</div>
     </div>
   );
 }
-
-export default App;
