@@ -11,36 +11,24 @@ const teamImages = [
 // Dummy data for team members
 const teamMembers = [
     {
-        name: 'John Doe',
-        role: 'Software Engineer',
-        linkedin: 'https://linkedin.com/in/johndoe',
-        github: 'https://github.com/johndoe',
-        bio: 'John has 5+ years of experience in full-stack development and is passionate about AI.',
-        moreDetails: 'John worked on several projects in AI and software development. He contributed to large-scale distributed systems.'
+        name: 'Utsav Singhal',
+        linkedin: 'https://linkedin.com/in/UTSAVS26',
+        github: 'https://github.com/UTSAVS26'
     },
     {
-        name: 'Jane Smith',
-        role: 'Product Manager',
-        linkedin: 'https://linkedin.com/in/janesmith',
-        github: 'https://github.com/janesmith',
-        bio: 'Jane has a strong background in product design and management.',
-        moreDetails: 'Jane has led product teams in various domains, including SaaS and mobile applications.'
+        name: 'Nandani Daga',
+        linkedin: 'https://www.linkedin.com/in/nandani-daga-493292204',
+        github: 'https://github.com/Nandanidaga'
     },
     {
-        name: 'Alice Johnson',
-        role: 'UX/UI Designer',
+        name: 'Shreya Gosavi ',
         linkedin: 'https://linkedin.com/in/alicejohnson',
-        github: 'https://github.com/alicejohnson',
-        bio: 'Alice specializes in creating intuitive user interfaces and engaging user experiences.',
-        moreDetails: 'Alice has worked with multiple companies in the e-commerce and education sectors.'
+        github: 'https://github.com/Shreyagosavi811'
     },
     {
-        name: 'Bob Brown',
-        role: 'Backend Developer',
-        linkedin: 'https://linkedin.com/in/bobbrown',
-        github: 'https://github.com/bobbrown',
-        bio: 'Bob focuses on building scalable and secure backend systems.',
-        moreDetails: 'Bob has expertise in cloud technologies, databases, and API development.'
+        name: 'Ranga Kavya',
+        linkedin: 'https://www.linkedin.com/in/ranga-kavya-448480264',
+        github: 'https://github.com/kavya-ux-2'
     }
 ];
 
