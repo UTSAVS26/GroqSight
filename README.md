@@ -24,10 +24,10 @@ GroqSight empowers visually impaired individuals by providing real-time, intelli
 `NeuroNova`
 
 ### Team Members:  
-- Utsav SInghal ([GitHub](https://github.com/UTSAVS26) / [LinkedIn](https://linkedin.com/in/utsavsinghal2604) / ROLE)  
-- Nandani Daga ([GitHub](https://github.com/) / [LinkedIn](https://linkedin.com/in/)  / ROLE)  
-- Shreya Gosavi ([GitHub](https://github.com/Shreyagosavi811) / [LinkedIn](https://www.linkedin.com/in/shreya-gosavi-297485299/)  / ROLE)  
-- Kavya ([GitHub](https://github.com/) / [LinkedIn](https://linkedin.com/in/) / ROLE)  
+- **Utsav Singhal** ([GitHub](https://github.com/UTSAVS26) / [LinkedIn](https://linkedin.com/in/utsavsinghal2604)) - **Team Lead & AI/ML Expert**  
+- **Nandani Daga** ([GitHub](https://github.com/) / [LinkedIn](https://linkedin.com/in/)) - **ML Enthusiast & Backend Engineer**  
+- **Shreya Gosavi** ([GitHub](https://github.com/Shreyagosavi811) / [LinkedIn](https://www.linkedin.com/in/shreya-gosavi-297485299/)) - **Full-Stack Developer & Creative Thinker**  
+- **Kavya** ([GitHub](https://github.com/) / [LinkedIn](https://linkedin.com/in/)) - **UX Developer & Product Designer**
 
 ### Your Approach:  
 - We chose this problem to make accessibility tools faster, smarter, and more human-friendly using Groq.  
@@ -99,12 +99,12 @@ docker-compose up --build
 ```bash
 # Backend
 cd backend
-docker build -t groqsight-backend .
+docker build -t groqsight-backend . 
 docker run -d -p 5000:5000 groqsight-backend
 
 # Frontend
 cd frontend
-docker build -t groqsight-frontend .
+docker build -t groqsight-frontend . 
 docker run -d -p 3000:3000 groqsight-frontend
 ```
 
