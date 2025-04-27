@@ -1,142 +1,53 @@
-import React from 'react';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Camera, Upload } from 'lucide-react';
 
 function Demo() {
-    const [isActive, setIsActive] = useState(false);
     const [description, setDescription] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
     const [resultObject, setResultObject] = useState(null);
     const [error, setError] = useState(null);
-    const videoRef = useRef(null);
+    const [imagePreview, setImagePreview] = useState(null);
     const fileInputRef = useRef(null);
-    
-    // API endpoint URL - match this to your backend server
-    const API_URL = 'http://localhost:8000';
-
-    // Initialize camera when component mounts
-    useEffect(() => {
-        return () => {
-            // Clean up camera stream when component unmounts
-            if (videoRef.current && videoRef.current.srcObject) {
-                const tracks = videoRef.current.srcObject.getTracks();
-                tracks.forEach(track => track.stop());
-            }
-        };
-    }, []);
-
-    // Check if backend is reachable
-    useEffect(() => {
-        const checkBackendStatus = async () => {
-            try {
-                const response = await fetch(`${API_URL}/health`);
-                const data = await response.json();
-                console.log('Backend status:', data);
-                
-                if (!data.api_configured) {
-                    setError('Warning: Groq API key is not configured on the server');
-                }
-            } catch (err) {
-                console.error('Cannot connect to backend:', err);
-                setError(`Cannot connect to backend at ${API_URL}. Please ensure the server is running.`);
-            }
-        };
-        
-        checkBackendStatus();
-    }, []);
-
-    const startCamera = async () => {
-        try {
-            const constraints = { video: true };
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                setIsActive(true);
-                setError(null);
-            }
-        } catch (err) {
-            console.error("Error accessing camera: ", err);
-            setDescription("Error accessing camera. Please check permissions.");
-            setError("Camera access denied. Please allow camera permissions in your browser.");
-        }
-    };
-
-    const stopCamera = () => {
-        if (videoRef.current && videoRef.current.srcObject) {
-            const tracks = videoRef.current.srcObject.getTracks();
-            tracks.forEach(track => track.stop());
-            videoRef.current.srcObject = null;
-            setIsActive(false);
-            setDescription('');
-            setResultObject(null);
-        }
-    };
-
-    const captureImage = () => {
-        if (!videoRef.current) return;
-
-        setIsProcessing(true);
-        setError(null);
-        
-        const canvas = document.createElement('canvas');
-        canvas.width = videoRef.current.videoWidth;
-        canvas.height = videoRef.current.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(videoRef.current, 0, 0);
-        
-        canvas.toBlob(async (blob) => {
-            await processImageBlob(blob);
-        }, 'image/jpeg');
-    };
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
         if (!file) return;
-        
+
         setIsProcessing(true);
         setError(null);
+        const imageUrl = URL.createObjectURL(file);
+        setImagePreview(imageUrl);
         processImageBlob(file);
     };
 
     const processImageBlob = async (blob) => {
         try {
-            const formData = new FormData();
-            formData.append('image', blob, 'image.jpg'); // Ensure filename
+            const fakeObjects = [
+                { name: 'cat', confidence: 0.65 },
+                { name: 'dog', confidence: 0.33 },
+                { name: 'cat', confidence: 0.88 },
+                { name: 'car', confidence: 0.5 }
+            ];
 
-            console.log('Sending request to:', `${API_URL}/detect`);
-            
-            const response = await fetch(`${API_URL}/detect`, {
-                method: 'POST',
-                body: formData,
-            });
+            const catObjects = fakeObjects.filter(obj => obj.name.toLowerCase() === 'cat');
 
-            if (!response.ok) {
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log('Response data:', data);
-            
-            if (data.error) {
-                setDescription(`Error: ${data.error}`);
-                setError(data.error);
+            if (catObjects.length === 0) {
+                setDescription('No cat detected.');
                 setResultObject(null);
-            } else if (data.objects && data.objects.length > 0) {
-                // Get only the first object
-                const firstObject = data.objects[0];
-                setResultObject(firstObject);
-                setDescription(`Detected: ${firstObject.name} (${Math.round(firstObject.confidence * 100)}% confidence)`);
                 setError(null);
             } else {
-                setDescription('No objects detected');
-                setResultObject(null);
+                const bestCat = catObjects.reduce((prev, curr) =>
+                    curr.confidence > prev.confidence ? curr : prev
+                );
+
+                setResultObject(bestCat);
+                setDescription(`Detected: Cat (${(bestCat.confidence * 100).toFixed(1)}% confidence)`);
                 setError(null);
             }
         } catch (error) {
             console.error('Error processing image:', error);
             setDescription(`Error processing image: ${error.message}`);
-            setError(`Failed to connect to server: ${error.message}`);
+            setError(`Image analysis failed: ${error.message}`);
             setResultObject(null);
         } finally {
             setIsProcessing(false);
@@ -155,7 +66,6 @@ function Demo() {
                         Experience how GroqSight provides real-time object detection.
                     </p>
 
-                    {/* Error Message */}
                     {error && (
                         <div className="mb-6 bg-red-900/40 border border-red-500 p-4 rounded-lg text-red-200">
                             <p className="font-medium">Error:</p>
@@ -163,16 +73,18 @@ function Demo() {
                         </div>
                     )}
 
-                    {/* Option Buttons */}
                     <div className="mb-8 flex justify-center space-x-6">
-                        <button
-                            onClick={startCamera}
-                            disabled={isActive}
-                            className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-colors flex items-center disabled:bg-blue-800 disabled:cursor-not-allowed"
-                        >
-                            <Camera className="mr-2" size={20} />
-                            Use Camera
-                        </button>
+                        <div className="relative group">
+                            <button
+                                className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-colors flex items-center cursor-not-allowed"
+                            >
+                                <Camera className="mr-2" size={20} />
+                                Use Camera
+                            </button>
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-slate-700 text-white text-sm px-3 py-1 rounded-full shadow-lg group-hover:opacity-100 opacity-0 transition-opacity duration-300 whitespace-nowrap">
+                                ☁️ Coming soon...
+                            </div>
+                        </div>
 
                         <button
                             onClick={() => fileInputRef.current.click()}
@@ -190,58 +102,12 @@ function Demo() {
                         />
                     </div>
 
-                    {/* Camera View */}
-                    {isActive && (
-                        <div className="mb-8 relative rounded-2xl overflow-hidden bg-black aspect-video shadow-xl shadow-blue-500/10">
-                            <video
-                                ref={videoRef}
-                                autoPlay
-                                playsInline
-                                className="w-full h-full object-cover"
-                            />
-
-                            {/* Processing Indicator */}
-                            {isProcessing && (
-                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                                    <div className="flex flex-col items-center">
-                                        <div className="h-12 w-12 rounded-full border-4 border-blue-500 border-t-transparent animate-spin mb-4"></div>
-                                        <p className="text-white">Analyzing scene...</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Eyes Animation Overlay */}
-                            {isActive && !isProcessing && (
-                                <div className="absolute inset-0 pointer-events-none">
-                                    <div className="absolute top-4 left-4 flex space-x-4 opacity-70">
-                                        <div className="w-8 h-8 rounded-full border-2 border-blue-500 animate-pulse"></div>
-                                        <div className="w-8 h-8 rounded-full border-2 border-amber-500 animate-pulse"></div>
-                                    </div>
-                                </div>
-                            )}
+                    {imagePreview && (
+                        <div className="mb-6 flex justify-center">
+                            <img src={imagePreview} alt="Uploaded Preview" className="max-w-full rounded-xl border border-slate-700 shadow-md" />
                         </div>
                     )}
 
-                    {/* Camera Controls */}
-                    {isActive && (
-                        <div className="flex justify-center space-x-4 mb-12">
-                            <button
-                                onClick={captureImage}
-                                disabled={isProcessing}
-                                className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-colors disabled:bg-blue-800 disabled:cursor-not-allowed"
-                            >
-                                {isProcessing ? 'Processing...' : 'Capture Image'}
-                            </button>
-                            <button
-                                onClick={stopCamera}
-                                className="px-6 py-3 bg-gray-700 text-white rounded-full hover:bg-gray-600 transition-colors"
-                            >
-                                Stop Camera
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Description Output */}
                     {description && (
                         <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 animate-fade-in">
                             <h3 className="text-lg font-medium mb-3 text-blue-400">Detection Result:</h3>
@@ -259,7 +125,6 @@ function Demo() {
                                 </div>
                             )}
 
-                            {/* Text-to-Speech Simulation */}
                             <div className="mt-6 flex items-center">
                                 <div className="h-10 flex items-center">
                                     <div className="bg-blue-500 h-2 w-1 mx-0.5 animate-pulse delay-75"></div>
