@@ -66,7 +66,7 @@ GroqSight empowers visually impaired individuals by providing real-time, intelli
 
 ## 📽️ Demo & Deliverables
 
-- **Demo Video Link:** [https://youtu.be/demo-link](https://youtu.be/demo-link)  
+- **Demo Video Link:** [GroqSight Demo Videok]([https://youtu.be/demo-link](https://www.youtube.com/watch?v=BwFpkFJT8ok))  
 - **Pitch Deck / PPT Link:** [https://slides.com/groqsight-deck](https://slides.com/groqsight-deck)  
 
 ---
